@@ -171,6 +171,23 @@ select {
     cursor: pointer;
 }
 
+.unit-selector {
+    width: 80px;
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 5px;
+    background: #2a5298;
+    color: #fff;
+    border: 1px solid #00eaff;
+    cursor: pointer;
+}
+
+.unit-selector:focus {
+    outline: none;
+    border: 1px solid #ffd700;
+    box-shadow: 0 0 5px #ffd700;
+}
+
 .validation-message {
     color: #ff6b6b;
     font-size: 0.9em;
@@ -294,18 +311,57 @@ button:hover {
     margin-right: 15px;
     font-size: 0.9em;
 }
+
 .logo-container {
     position: relative;
 }
+
 .institute-logo {
     animation: powerUp 2s ease-in-out;
 }
+
 @keyframes powerUp {
     0% { transform: scale(0); opacity: 0; box-shadow: 0 0 0 rgba(255, 215, 0, 0); }
     50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 30px rgba(255, 215, 0, 0.8); }
     100% { transform: scale(1); opacity: 1; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
 }
+
 #lossBreakdownChart {
     max-width: 2160px;
     max-height: 600px;
+}
+
+/* Styles for Formulae Section */
+.formulae-section {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 30px;
+    border-radius: 20px;
+}
+
+.formula-entry {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.formula-entry h3 {
+    color: #ffd700;
+    text-shadow: 0 0 5px #ffd700;
+    margin-bottom: 10px;
+}
+
+.formula-entry p {
+    color: #fff;
+    font-size: 1em;
+    margin: 10px 0;
+    text-shadow: 0 0 3px #00eaff;
+}
+
+.formula-entry ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    color: #00eaff;
+}
+
+.formula-entry li {
+    margin: 5px 0;
 }
