@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulae - Transformer Losses Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Include MathJax for rendering mathematical equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="main-container">
+        <h1>Formulae Used in Transformer Losses Analyzer</h1>
+        <button onclick="window.location.href='index.html'" class="back-button">Back to Main Page</button>
+        
+        <div class="formulae-section card">
+            <h2>Losses and Efficiency Formulae</h2>
+            <div class="formula-entry">
+                <h3>Eddy Current Losses</h3>
+                <p>
+                    Eddy Current Losses are caused by induced currents in the core due to changing magnetic fields.
+                    The formula used is:
+                </p>
+                <p>
+                    \( P_{\text{eddy}} = k_{\text{eddy}} \times f^2 \times B^2 \times V \)
+                </p>
+                <p>Where:</p>
+                <ul>
+                    <li>\( P_{\text{eddy}} \): Eddy Current Loss (W)</li>
+                    <li>\( k_{\text{eddy}} \): Core constant (0.0005 for CRGO, 0.0008 for Ferrite)</li>
+                    <li>\( f \): Frequency (Hz)</li>
+                    <li>\( B \): Magnetic Field (Tesla)</li>
+                    <li>\( V \): Core Volume (m³)</li>
+                </ul>
+            </div>
+            <div class="formula-entry">
+                <h3>Hysteresis Losses</h3>
+                <p>
+                    Hysteresis Losses occur due to the reversal of magnetic domains in the core.
+                    The formula used is:
+                </p>
+                <p>
+                    \( P_{\text{hyst}} = k_{\text{hyst}} \times f \times B^{1.6} \times V \)
+                </p>
+                <p>Where:</p>
+                <ul>
+                    <li>\( P_{\text{hyst}} \): Hysteresis Loss (W)</li>
+                    <li>\( k_{\text{hyst}} \): Core constant (0.001 for CRGO, 0.0012 for Ferrite)</li>
+                    <li>\( f \): Frequency (Hz)</li>
+                    <li>\( B \): Magnetic Field (Tesla)</li>
+                    <li>\( V \): Core Volume (m³)</li>
+                </ul>
+            </div>
+            <div class="formula-entry">
+                <h3>Copper Losses</h3>
+                <p>
+                    Copper Losses are due to the resistance in the transformer windings.
+                    The formula used is:
+                </p>
+                <p>
+                    \( P_{\text{copper}} = I^2 \times R_{\text{temp}} \)
+                </p>
+                <p>
+                    Where \( R_{\text{temp}} = R \times (1 + \alpha \times (T - 20)) \)
+                </p>
+                <p>
+                    And \( I = \frac{\text{Rated Power} \times \text{Load Percentage}}{\text{Secondary Voltage}} \)
+                </p>
+                <p>Where:</p>
+                <ul>
+                    <li>\( P_{\text{copper}} \): Copper Loss (W)</li>
+                    <li>\( I \): Current (A)</li>
+                    <li>\( R_{\text{temp}} \): Resistance adjusted for temperature (Ω)</li>
+                    <li>\( R \): Winding Resistance at 20°C (Ω)</li>
+                    <li>\( \alpha \): Temperature coefficient (0.00393 for copper)</li>
+                    <li>\( T \): Temperature (°C)</li>
+                </ul>
+            </div>
+            <div class="formula-entry">
+                <h3>Stray Losses</h3>
+                <p>
+                    Stray Losses are caused by leakage fluxes in conductive parts.
+                    The formula used is:
+                </p>
+                <p>
+                    \( P_{\text{stray}} = 0.1 \times (P_{\text{eddy}} + P_{\text{hyst}} + P_{\text{copper}}) \)
+                </p>
+                <p>Where:</p>
+                <ul>
+                    <li>\( P_{\text{stray}} \): Stray Loss (W)</li>
+                    <li>\( P_{\text{eddy}} \): Eddy Current Loss (W)</li>
+                    <li>\( P_{\text{hyst}} \): Hysteresis Loss (W)</li>
+                    <li>\( P_{\text{copper}} \): Copper Loss (W)</li>
+                </ul>
+            </div>
+            <div class="formula-entry">
+                <h3>Dielectric Losses</h3>
+                <p>
+                    Dielectric Losses occur due to energy dissipation in the insulation material.
+                    The formula used is:
+                </p>
+                <p>
+                    \( P_{\text{dielectric}} = V_{\text{primary}}^2 \times f \times k_{\text{dielectric}} \)
+                </p>
+                <p>Where:</p>
+                <ul>
+                    <li>\( P_{\text{dielectric}} \): Dielectric Loss (W)</li>
+                    <li>\( V_{\text{primary}} \): Primary Voltage (V)</li>
+                    <li>\( f \): Frequency (Hz)</li>
+                    <li>\( k_{\text{dielectric}} \): Dielectric constant (0.0001)</li>
+                </ul>
+            </div>
+            <div class="formula-entry">
+                <h3>Total Losses</h3>
+                <p>
+                    Total Losses are the sum of all individual losses.
+                    The formula used is:
+                </p>
+                <p>
+                    \( P_{\text{total}} = P_{\text{eddy}} + P_{\text{hyst}} + P_{\text{copper}} + P_{\text{stray}} + P_{\text{dielectric}} \)
+                </p>
+                <p>Where:</p>
+                <ul>
+                    <li>\( P_{\text{total}} \): Total Loss (W)</li>
+                </ul>
+            </div>
+            <div class="formula-entry">
+                <h3>Efficiency</h3>
+                <p>
+                    Efficiency is the ratio of output power to input power, expressed as a percentage.
+                    The formula used is:
+                </p>
+                <p>
+                    \( \eta = \left( \frac{P_{\text{output}}}{P_{\text{input}}} \right) \times 100 \)
+                </p>
+                <p>
+                    Where \( P_{\text{output}} = \text{Rated Power} \times \text{Load Percentage} \)
+                </p>
+                <p>
+                    And \( P_{\text{input}} = P_{\text{output}} + P_{\text{total}} \)
+                </p>
+                <p>Where:</p>
+                <ul>
+                    <li>\( \eta \): Efficiency (%)</li>
+                    <li>\( P_{\text{output}} \): Output Power (W)</li>
+                    <li>\( P_{\text{input}} \): Input Power (W)</li>
+                    <li>\( P_{\text{total}} \): Total Loss (W)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
