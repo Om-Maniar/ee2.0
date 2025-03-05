@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Transformer Losses Analyzer</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>Transformer Losses Analyzer & Efficiency Calculator</h1>
+        <button onclick="window.location.href='index.html'" class="back-button">Back to Main Page</button>
+        
+        <!-- Input Section -->
+        <div class="input-section card">
+            <h2>Input Parameters</h2>
+            <div class="input-group">
+                <label>Primary Voltage (V):</label>
+                <input type="range" id="primaryVoltageSlider" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('primaryVoltage')">
+                <input type="number" id="primaryVoltageText" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('primaryVoltage')">
+                <span class="validation-message" id="primaryVoltageError"></span>
+            </div>
+            <div class="input-group">
+                <label>Secondary Voltage (V):</label>
+                <input type="range" id="secondaryVoltageSlider" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('secondaryVoltage')">
+                <input type="number" id="secondaryVoltageText" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('secondaryVoltage')">
+                <span class="validation-message" id="secondaryVoltageError"></span>
+            </div>
+            <div class="input-group">
+                <label>Rated Power (kVA):</label>
+                <input type="range" id="ratedPowerSlider" min="0" max="100" step="0.1" value="10" oninput="syncInputs('ratedPower')">
+                <input type="number" id="ratedPowerText" min="0" max="100" step="0.1" value="10" oninput="syncInputs('ratedPower')">
+                <span class="validation-message" id="ratedPowerError"></span>
+            </div>
+            <div class="input-group">
+                <label>Frequency (Hz):</label>
+                <input type="range" id="frequencySlider" min="0" max="100" step="0.1" value="50" oninput="syncInputs('frequency')">
+                <input type="number" id="frequencyText" min="0" max="100" step="0.1" value="50" oninput="syncInputs('frequency')">
+                <span class="validation-message" id="frequencyError"></span>
+            </div>
+            <div class="input-group">
+                <label>Winding Resistance (Ω):</label>
+                <input type="range" id="windingResistanceSlider" min="0" max="100" step="1" value="5" oninput="syncInputs('windingResistance')">
+                <input type="number" id="windingResistanceText" min="0" max="100" step="1" value="5" oninput="syncInputs('windingResistance')">
+                <span class="validation-message" id="windingResistanceError"></span>
+            </div>
+            <div class="input-group">
+                <label>Load Percentage (%):</label>
+                <input type="range" id="loadPercentageSlider" min="0" max="100" step="1" value="50" oninput="syncInputs('loadPercentage')">
+                <input type="number" id="loadPercentageText" min="0" max="100" step="1" value="50" oninput="syncInputs('loadPercentage')">
+                <span class="validation-message" id="loadPercentageError"></span>
+            </div>
+            <div class="input-group">
+                <label>Volume (m³):</label>
+                <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.1" oninput="syncInputs('volume')">
+                <input type="number" id="volumeText" min="0" max="1" step="0.01" value="0.1" oninput="syncInputs('volume')">
+                <span class="validation-message" id="volumeError"></span>
+            </div>
+            <div class="input-group">
+                <label>Magnetic Field (Tesla):</label>
+                <input type="range" id="magneticFieldSlider" min="0" max="5" step="0.01" value="1.5" oninput="syncInputs('magneticField')">
+                <input type="number" id="magneticFieldText" min="0" max="5" step="0.01" value="1.5" oninput="syncInputs('magneticField')">
+                <span class="validation-message" id="magneticFieldError"></span>
+            </div>
+            <div class="input-group">
+                <label>Temperature (°C):</label>
+                <input type="range" id="temperatureSlider" min="-20" max="80" step="1" value="25" oninput="syncInputs('temperature')">
+                <input type="number" id="temperatureText" min="-20" max="80" step="1" value="25" oninput="syncInputs('temperature')">
+                <span class="validation-message" id="temperatureError"></span>
+            </div>
+            <div class="input-group">
+                <label>Core Type:</label>
+                <select id="coreType">
+                    <option value="crgo">CRGO</option>
+                    <option value="ferrite">Ferrite</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Live Updates:</label>
+                <input type="checkbox" id="liveUpdateToggle" onchange="toggleLiveUpdates()">
+                <span style="margin-left: 10px;">Enable Live Updates</span>
+            </div>
+            <!-- Loss Impact Simulator Toggles -->
+            <div class="input-group">
+                <label>Toggle Losses:</label>
+                <input type="checkbox" id="toggleEddy" checked onchange="calculateLosses(false)"> Eddy Current
+                <input type="checkbox" id="toggleHysteresis" checked onchange="calculateLosses(false)"> Hysteresis
+                <input type="checkbox" id="toggleCopper" checked onchange="calculateLosses(false)"> Copper
+                <input type="checkbox" id="toggleStray" checked onchange="calculateLosses(false)"> Stray
+                <input type="checkbox" id="toggleDielectric" checked onchange="calculateLosses(false)"> Dielectric
+            </div>
+            <div class="button-group">
+                <button onclick="calculateWithValidation()">Calculate</button>
+                <button onclick="resetForm()" class="reset-button">Reset</button>
+            </div>
+        </div>
+
+        <!-- Educational Section: Animated Loss Explainers -->
+        <div class="education-section card">
+            <h2>Learn About Transformer Losses</h2>
+            <div class="loss-explainer">
+                <div class="loss-type">
+                    <h3>Copper Losses</h3>
+                    <canvas id="copperLossAnimation" width="200" height="100"></canvas>
+                    <p>Caused by resistance in the windings as current flows.</p>
+                </div>
+                <div class="loss-type">
+                    <h3>Hysteresis Losses</h3>
+                    <canvas id="hysteresisLossAnimation" width="200" height="100"></canvas>
+                    <p>Due to magnetic domain reversal in the core.</p>
+                </div>
+                <div class="loss-type">
+                    <h3>Eddy Current Losses</h3>
+                    <canvas id="eddyLossAnimation" width="200" height="100"></canvas>
+                    <p>Induced currents in the core due to changing magnetic fields.</p>
+                </div>
+                <div class="loss-type">
+                    <h3>Stray Losses</h3>
+                    <canvas id="strayLossAnimation" width="200" height="100"></canvas>
+                    <p>Caused by leakage fluxes in conductive parts.</p>
+                </div>
+                <div class="loss-type">
+                    <h3>Dielectric Losses</h3>
+                    <canvas id="dielectricLossAnimation" width="200" height="100"></canvas>
+                    <p>Energy dissipation in the insulation material.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section card">
+            <h2>Results</h2>
+            <p>Eddy Current Loss: <span id="eddyLosses">0</span> W</p>
+            <p>Hysteresis Loss: <span id="hysteresisLosses">0</span> W</p>
+            <p>Copper Losses: <span id="copperLosses">0</span> W</p>
+            <p>Stray Losses: <span id="strayLosses">0</span> W</p>
+            <p>Dielectric Loss: <span id="dielectricLosses">0</span> W</p>
+            <p>Total Losses: <span id="totalLosses">0</span> W</p>
+            <p>Efficiency: <span id="efficiency">0</span> %</p>
+        </div>
+
+        <!-- Visualization Section -->
+        <div class="visualization-section card">
+            <h2>Visualizations</h2>
+            <canvas id="lossBreakdownChart" width="300" height="150"></canvas>
+            <canvas id="lossVsVoltageChart" width="400" height="200"></canvas>
+            <canvas id="liveLossChart" width="400" height="200"></canvas>
+            <canvas id="lossVsTemperatureChart" width="400" height="200"></canvas>
+            <canvas id="efficiencyVsLoadChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    <script src="script.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91b2f9799c6fbad7',t:'MTc0MTEwODA5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
+</html>
