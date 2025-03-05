@@ -1,6 +1,28 @@
 let lossVsVoltageChart, liveLossChart, lossVsTemperatureChart, efficiencyVsLoadChart, lossBreakdownChart;
 let liveUpdatesEnabled = false;
 
+// Object to store unit multipliers for each input field
+const unitMultipliers = {
+    primaryVoltage: 1,
+    secondaryVoltage: 1,
+    ratedPower: 1,
+    frequency: 1,
+    windingResistance: 1,
+    volume: 1,
+    magneticField: 1
+};
+
+// Object to store base ranges for sliders (in base units)
+const baseRanges = {
+    primaryVoltage: { min: 0, max: 1000, step: 0.1 },
+    secondaryVoltage: { min: 0, max: 1000, step: 0.1 },
+    ratedPower: { min: 0, max: 100, step: 0.1 }, // Base unit is kVA
+    frequency: { min: 0, max: 100, step: 0.1 },
+    windingResistance: { min: 0, max: 100, step: 1 },
+    volume: { min: 0, max: 1, step: 0.01 },
+    magneticField: { min: 0, max: 5, step: 0.01 }
+};
+
 function syncInputs(baseId) {
     const slider = document.getElementById(baseId + 'Slider');
     const text = document.getElementById(baseId + 'Text');
@@ -19,6 +41,35 @@ function syncInputs(baseId) {
     }
 }
 
+function updateUnit(baseId) {
+    const unitSelector = document.getElementById(baseId + 'Unit');
+    const multiplier = parseFloat(unitSelector.value);
+    unitMultipliers[baseId] = multiplier;
+
+    // Update slider and text input ranges based on the new unit
+    const slider = document.getElementById(baseId + 'Slider');
+    const text = document.getElementById(baseId + 'Text');
+    const baseRange = baseRanges[baseId];
+
+    slider.min = baseRange.min / multiplier;
+    slider.max = baseRange.max / multiplier;
+    slider.step = baseRange.step / multiplier;
+
+    text.min = baseRange.min / multiplier;
+    text.max = baseRange.max / multiplier;
+    text.step = baseRange.step / multiplier;
+
+    // Convert the current value to the new unit
+    const currentValue = parseFloat(text.value);
+    const newValue = currentValue * (unitMultipliers[baseId] / multiplier);
+    text.value = newValue;
+    slider.value = newValue;
+
+    if (liveUpdatesEnabled) {
+        calculateLosses(false);
+    }
+}
+
 function toggleLiveUpdates() {
     liveUpdatesEnabled = document.getElementById('liveUpdateToggle').checked;
     if (liveUpdatesEnabled) {
@@ -29,24 +80,48 @@ function toggleLiveUpdates() {
 function resetForm() {
     console.log("resetForm triggered");
 
+    // Reset input fields to default values (in base units)
     document.getElementById('primaryVoltageSlider').value = 230;
     document.getElementById('primaryVoltageText').value = 230;
+    document.getElementById('primaryVoltageUnit').value = 1;
+    unitMultipliers.primaryVoltage = 1;
+
     document.getElementById('secondaryVoltageSlider').value = 230;
     document.getElementById('secondaryVoltageText').value = 230;
+    document.getElementById('secondaryVoltageUnit').value = 1;
+    unitMultipliers.secondaryVoltage = 1;
+
     document.getElementById('ratedPowerSlider').value = 10;
     document.getElementById('ratedPowerText').value = 10;
+    document.getElementById('ratedPowerUnit').value = 1;
+    unitMultipliers.ratedPower = 1;
+
     document.getElementById('frequencySlider').value = 50;
     document.getElementById('frequencyText').value = 50;
-    document.getElementById('windingResistanceSlider').value = 0.1;
-    document.getElementById('windingResistanceText').value = 0.1;
+    document.getElementById('frequencyUnit').value = 1;
+    unitMultipliers.frequency = 1;
+
+    document.getElementById('windingResistanceSlider').value = 5;
+    document.getElementById('windingResistanceText').value = 5;
+    document.getElementById('windingResistanceUnit').value = 1;
+    unitMultipliers.windingResistance = 1;
+
     document.getElementById('loadPercentageSlider').value = 50;
     document.getElementById('loadPercentageText').value = 50;
+
     document.getElementById('volumeSlider').value = 0.1;
     document.getElementById('volumeText').value = 0.1;
+    document.getElementById('volumeUnit').value = 1;
+    unitMultipliers.volume = 1;
+
     document.getElementById('magneticFieldSlider').value = 1.5;
     document.getElementById('magneticFieldText').value = 1.5;
+    document.getElementById('magneticFieldUnit').value = 1;
+    unitMultipliers.magneticField = 1;
+
     document.getElementById('temperatureSlider').value = 25;
     document.getElementById('temperatureText').value = 25;
+
     document.getElementById('coreType').value = 'crgo';
     document.getElementById('liveUpdateToggle').checked = false;
     liveUpdatesEnabled = false;
@@ -57,6 +132,19 @@ function resetForm() {
     document.getElementById('toggleCopper').checked = true;
     document.getElementById('toggleStray').checked = true;
     document.getElementById('toggleDielectric').checked = true;
+
+    // Reset slider ranges to base units
+    Object.keys(baseRanges).forEach(baseId => {
+        const slider = document.getElementById(baseId + 'Slider');
+        const text = document.getElementById(baseId + 'Text');
+        const range = baseRanges[baseId];
+        slider.min = range.min;
+        slider.max = range.max;
+        slider.step = range.step;
+        text.min = range.min;
+        text.max = range.max;
+        text.step = range.step;
+    });
 
     clearValidationMessages();
 
@@ -119,14 +207,15 @@ function validateInputs(inputs) {
 function calculateLosses(isButtonClick = false) {
     console.log("calculateLosses called, isButtonClick:", isButtonClick);
 
-    const primaryVoltage = parseFloat(document.getElementById('primaryVoltageSlider').value) || 0;
-    const secondaryVoltage = parseFloat(document.getElementById('secondaryVoltageSlider').value) || 0;
-    const ratedPower = (parseFloat(document.getElementById('ratedPowerSlider').value) || 0) * 1000;
-    const frequency = parseFloat(document.getElementById('frequencySlider').value) || 0;
-    const windingResistance = parseFloat(document.getElementById('windingResistanceSlider').value) || 0;
+    // Get raw values and convert to base units
+    const primaryVoltage = (parseFloat(document.getElementById('primaryVoltageSlider').value) || 0) * unitMultipliers.primaryVoltage;
+    const secondaryVoltage = (parseFloat(document.getElementById('secondaryVoltageSlider').value) || 0) * unitMultipliers.secondaryVoltage;
+    const ratedPower = (parseFloat(document.getElementById('ratedPowerSlider').value) || 0) * unitMultipliers.ratedPower * 1000; // Convert to VA
+    const frequency = (parseFloat(document.getElementById('frequencySlider').value) || 0) * unitMultipliers.frequency;
+    const windingResistance = (parseFloat(document.getElementById('windingResistanceSlider').value) || 0) * unitMultipliers.windingResistance;
     const loadPercentage = (parseFloat(document.getElementById('loadPercentageSlider').value) || 0) / 100;
-    const volume = parseFloat(document.getElementById('volumeSlider').value) || 0;
-    const magneticField = parseFloat(document.getElementById('magneticFieldSlider').value) || 0;
+    const volume = (parseFloat(document.getElementById('volumeSlider').value) || 0) * unitMultipliers.volume;
+    const magneticField = (parseFloat(document.getElementById('magneticFieldSlider').value) || 0) * unitMultipliers.magneticField;
     const temperature = parseFloat(document.getElementById('temperatureSlider').value) || 25;
     const coreType = document.getElementById('coreType').value;
 
@@ -138,7 +227,7 @@ function calculateLosses(isButtonClick = false) {
     const toggleDielectric = document.getElementById('toggleDielectric').checked;
 
     const inputs = { primaryVoltage, secondaryVoltage, ratedPower, frequency, windingResistance, loadPercentage, volume, magneticField, temperature };
-    console.log("Inputs:", inputs);
+    console.log("Inputs (in base units):", inputs);
 
     if (isButtonClick && !validateInputs(inputs)) {
         return;
