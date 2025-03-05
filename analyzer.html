@@ -19,30 +19,62 @@
                 <label>Primary Voltage (V):</label>
                 <input type="range" id="primaryVoltageSlider" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('primaryVoltage')">
                 <input type="number" id="primaryVoltageText" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('primaryVoltage')">
+                <select id="primaryVoltageUnit" class="unit-selector" onchange="updateUnit('primaryVoltage')">
+                    <option value="1">V</option>
+                    <option value="1e-3">mV</option>
+                    <option value="1e-6">µV</option>
+                    <option value="1e3">kV</option>
+                    <option value="1e6">MV</option>
+                </select>
                 <span class="validation-message" id="primaryVoltageError"></span>
             </div>
             <div class="input-group">
                 <label>Secondary Voltage (V):</label>
                 <input type="range" id="secondaryVoltageSlider" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('secondaryVoltage')">
                 <input type="number" id="secondaryVoltageText" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('secondaryVoltage')">
+                <select id="secondaryVoltageUnit" class="unit-selector" onchange="updateUnit('secondaryVoltage')">
+                    <option value="1">V</option>
+                    <option value="1e-3">mV</option>
+                    <option value="1e-6">µV</option>
+                    <option value="1e3">kV</option>
+                    <option value="1e6">MV</option>
+                </select>
                 <span class="validation-message" id="secondaryVoltageError"></span>
             </div>
             <div class="input-group">
                 <label>Rated Power (kVA):</label>
                 <input type="range" id="ratedPowerSlider" min="0" max="100" step="0.1" value="10" oninput="syncInputs('ratedPower')">
                 <input type="number" id="ratedPowerText" min="0" max="100" step="0.1" value="10" oninput="syncInputs('ratedPower')">
+                <select id="ratedPowerUnit" class="unit-selector" onchange="updateUnit('ratedPower')">
+                    <option value="1">kVA</option>
+                    <option value="1e-3">VA</option>
+                    <option value="1e3">MVA</option>
+                    <option value="1e6">GVA</option>
+                </select>
                 <span class="validation-message" id="ratedPowerError"></span>
             </div>
             <div class="input-group">
                 <label>Frequency (Hz):</label>
                 <input type="range" id="frequencySlider" min="0" max="100" step="0.1" value="50" oninput="syncInputs('frequency')">
                 <input type="number" id="frequencyText" min="0" max="100" step="0.1" value="50" oninput="syncInputs('frequency')">
+                <select id="frequencyUnit" class="unit-selector" onchange="updateUnit('frequency')">
+                    <option value="1">Hz</option>
+                    <option value="1e3">kHz</option>
+                    <option value="1e6">MHz</option>
+                </select>
                 <span class="validation-message" id="frequencyError"></span>
             </div>
             <div class="input-group">
                 <label>Winding Resistance (Ω):</label>
                 <input type="range" id="windingResistanceSlider" min="0" max="100" step="1" value="5" oninput="syncInputs('windingResistance')">
                 <input type="number" id="windingResistanceText" min="0" max="100" step="1" value="5" oninput="syncInputs('windingResistance')">
+                <select id="windingResistanceUnit" class="unit-selector" onchange="updateUnit('windingResistance')">
+                    <option value="1">Ω</option>
+                    <option value="1e-3">mΩ</option>
+                    <option value="1e-6">µΩ</option>
+                    <option value="1e3">kΩ</option>
+                    <option value="1e6">MΩ</option>
+                </select>
                 <span class="validation-message" id="windingResistanceError"></span>
             </div>
             <div class="input-group">
@@ -55,12 +87,22 @@
                 <label>Volume (m³):</label>
                 <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.1" oninput="syncInputs('volume')">
                 <input type="number" id="volumeText" min="0" max="1" step="0.01" value="0.1" oninput="syncInputs('volume')">
+                <select id="volumeUnit" class="unit-selector" onchange="updateUnit('volume')">
+                    <option value="1">m³</option>
+                    <option value="1e-3">dm³</option>
+                    <option value="1e-6">cm³</option>
+                </select>
                 <span class="validation-message" id="volumeError"></span>
             </div>
             <div class="input-group">
                 <label>Magnetic Field (Tesla):</label>
                 <input type="range" id="magneticFieldSlider" min="0" max="5" step="0.01" value="1.5" oninput="syncInputs('magneticField')">
                 <input type="number" id="magneticFieldText" min="0" max="5" step="0.01" value="1.5" oninput="syncInputs('magneticField')">
+                <select id="magneticFieldUnit" class="unit-selector" onchange="updateUnit('magneticField')">
+                    <option value="1">T</option>
+                    <option value="1e-3">mT</option>
+                    <option value="1e-6">µT</option>
+                </select>
                 <span class="validation-message" id="magneticFieldError"></span>
             </div>
             <div class="input-group">
@@ -151,6 +193,5 @@
         </div>
     </div>
     <script src="script.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'91b2f9799c6fbad7',t:'MTc0MTEwODA5NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
