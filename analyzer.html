@@ -6,6 +6,17 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Inline CSS to broaden select boxes */
+        .broad-select {
+            width: 200px; /* Broadened width for better visibility */
+            padding: 10px;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -21,10 +32,7 @@
                 <input type="number" id="primaryVoltageText" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('primaryVoltage')">
                 <select id="primaryVoltageUnit" class="unit-selector" onchange="updateUnit('primaryVoltage')">
                     <option value="1">V</option>
-                    <option value="1e-3">mV</option>
-                    <option value="1e-6">µV</option>
                     <option value="1e3">kV</option>
-                    <option value="1e6">MV</option>
                 </select>
                 <span class="validation-message" id="primaryVoltageError"></span>
             </div>
@@ -34,10 +42,7 @@
                 <input type="number" id="secondaryVoltageText" min="0" max="1000" step="0.1" value="230" oninput="syncInputs('secondaryVoltage')">
                 <select id="secondaryVoltageUnit" class="unit-selector" onchange="updateUnit('secondaryVoltage')">
                     <option value="1">V</option>
-                    <option value="1e-3">mV</option>
-                    <option value="1e-6">µV</option>
                     <option value="1e3">kV</option>
-                    <option value="1e6">MV</option>
                 </select>
                 <span class="validation-message" id="secondaryVoltageError"></span>
             </div>
@@ -48,8 +53,6 @@
                 <select id="ratedPowerUnit" class="unit-selector" onchange="updateUnit('ratedPower')">
                     <option value="1">kVA</option>
                     <option value="1e-3">VA</option>
-                    <option value="1e3">MVA</option>
-                    <option value="1e6">GVA</option>
                 </select>
                 <span class="validation-message" id="ratedPowerError"></span>
             </div>
@@ -60,7 +63,6 @@
                 <select id="frequencyUnit" class="unit-selector" onchange="updateUnit('frequency')">
                     <option value="1">Hz</option>
                     <option value="1e3">kHz</option>
-                    <option value="1e6">MHz</option>
                 </select>
                 <span class="validation-message" id="frequencyError"></span>
             </div>
@@ -70,10 +72,7 @@
                 <input type="number" id="windingResistanceText" min="0" max="100" step="1" value="5" oninput="syncInputs('windingResistance')">
                 <select id="windingResistanceUnit" class="unit-selector" onchange="updateUnit('windingResistance')">
                     <option value="1">Ω</option>
-                    <option value="1e-3">mΩ</option>
-                    <option value="1e-6">µΩ</option>
                     <option value="1e3">kΩ</option>
-                    <option value="1e6">MΩ</option>
                 </select>
                 <span class="validation-message" id="windingResistanceError"></span>
             </div>
@@ -89,8 +88,6 @@
                 <input type="number" id="volumeText" min="0" max="1" step="0.01" value="0.1" oninput="syncInputs('volume')">
                 <select id="volumeUnit" class="unit-selector" onchange="updateUnit('volume')">
                     <option value="1">m³</option>
-                    <option value="1e-3">dm³</option>
-                    <option value="1e-6">cm³</option>
                 </select>
                 <span class="validation-message" id="volumeError"></span>
             </div>
@@ -100,8 +97,6 @@
                 <input type="number" id="magneticFieldText" min="0" max="5" step="0.01" value="1.5" oninput="syncInputs('magneticField')">
                 <select id="magneticFieldUnit" class="unit-selector" onchange="updateUnit('magneticField')">
                     <option value="1">T</option>
-                    <option value="1e-3">mT</option>
-                    <option value="1e-6">µT</option>
                 </select>
                 <span class="validation-message" id="magneticFieldError"></span>
             </div>
@@ -113,28 +108,168 @@
             </div>
             <div class="input-group">
                 <label>Core Type:</label>
-                <select id="coreType">
+                <select id="coreType" class="broad-select" onchange="updateCoreConstants()">
                     <option value="crgo">CRGO</option>
                     <option value="ferrite">Ferrite</option>
+                    <option value="amorphous">Amorphous Steel</option>
+                    <option value="siliconSteel">Silicon Steel</option>
                 </select>
+            </div>
+            <div class="input-group">
+                <label>Core Permeability (H/m):</label>
+                <input type="range" id="corePermeabilitySlider" min="1e-4" max="1e-2" step="1e-5" value="2e-3" oninput="syncInputs('corePermeability')">
+                <input type="number" id="corePermeabilityText" min="1e-4" max="1e-2" step="1e-5" value="2e-3" oninput="syncInputs('corePermeability')">
+                <span class="validation-message" id="corePermeabilityError"></span>
+            </div>
+            <div class="input-group">
+                <label>Core Resistivity (Ωm):</label>
+                <input type="range" id="coreResistivitySlider" min="1e-8" max="1e-6" step="1e-9" value="5e-7" oninput="syncInputs('coreResistivity')">
+                <input type="number" id="coreResistivityText" min="1e-8" max="1e-6" step="1e-9" value="5e-7" oninput="syncInputs('coreResistivity')">
+                <span class="validation-message" id="coreResistivityError"></span>
+            </div>
+            <div class="input-group">
+                <label>Core Thickness (mm):</label>
+                <input type="range" id="coreThicknessSlider" min="0.1" max="1" step="0.01" value="0.3" oninput="syncInputs('coreThickness')">
+                <input type="number" id="coreThicknessText" min="0.1" max="1" step="0.01" value="0.3" oninput="syncInputs('coreThickness')">
+                <span class="validation-message" id="coreThicknessError"></span>
+            </div>
+            <div class="input-group">
+                <label>Primary Turns:</label>
+                <input type="range" id="primaryTurnsSlider" min="10" max="1000" step="10" value="100" oninput="syncInputs('primaryTurns')">
+                <input type="number" id="primaryTurnsText" min="10" max="1000" step="10" value="100" oninput="syncInputs('primaryTurns')">
+                <span class="validation-message" id="primaryTurnsError"></span>
+            </div>
+            <div class="input-group">
+                <label>Secondary Turns:</label>
+                <input type="range" id="secondaryTurnsSlider" min="10" max="1000" step="10" value="100" oninput="syncInputs('secondaryTurns')">
+                <input type="number" id="secondaryTurnsText" min="10" max="1000" step="10" value="100" oninput="syncInputs('secondaryTurns')">
+                <span class="validation-message" id="secondaryTurnsError"></span>
+            </div>
+            <div class="input-group">
+                <label>Insulation Type:</label>
+                <select id="insulationType">
+                    <option value="paper">Paper</option>
+                    <option value="oil">Oil</option>
+                    <option value="epoxy">Epoxy</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Insulation Thickness (mm):</label>
+                <input type="range" id="insulationThicknessSlider" min="0.1" max="5" step="0.1" value="1" oninput="syncInputs('insulationThickness')">
+                <input type="number" id="insulationThicknessText" min="0.1" max="5" step="0.1" value="1" oninput="syncInputs('insulationThickness')">
+                <span class="validation-message" id="insulationThicknessError"></span>
+            </div>
+            <div class="input-group">
+                <label>Ambient Temperature (°C):</label>
+                <input type="range" id="ambientTemperatureSlider" min="-40" max="60" step="1" value="25" oninput="syncInputs('ambientTemperature')">
+                <input type="number" id="ambientTemperatureText" min="-40" max="60" step="1" value="25" oninput="syncInputs('ambientTemperature')">
+                <span class="validation-message" id="ambientTemperatureError"></span>
+            </div>
+            <div class="input-group">
+                <label>Cooling Method:</label>
+                <select id="coolingMethod" class="broad-select">
+                    <option value="air">Natural Air</option>
+                    <option value="oil">Oil-Immersed</option>
+                    <option value="forcedAir">Forced Air</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Humidity (%):</label>
+                <input type="range" id="humiditySlider" min="0" max="100" step="1" value="50" oninput="syncInputs('humidity')">
+                <input type="number" id="humidityText" min="0" max="100" step="1" value="50" oninput="syncInputs('humidity')">
+                <span class="validation-message" id="humidityError"></span>
+            </div>
+            <div class="input-group">
+                <label>Power Factor:</label>
+                <input type="range" id="powerFactorSlider" min="0.8" max="1" step="0.01" value="0.95" oninput="syncInputs('powerFactor')">
+                <input type="number" id="powerFactorText" min="0.8" max="1" step="0.01" value="0.95" oninput="syncInputs('powerFactor')">
+                <span class="validation-message" id="powerFactorError"></span>
+            </div>
+            <div class="input-group">
+                <label>Harmonic Content (%):</label>
+                <input type="range" id="harmonicContentSlider" min="0" max="20" step="1" value="5" oninput="syncInputs('harmonicContent')">
+                <input type="number" id="harmonicContentText" min="0" max="20" step="1" value="5" oninput="syncInputs('harmonicContent')">
+                <span class="validation-message" id="harmonicContentError"></span>
+            </div>
+            <div class="input-group">
+                <label>Short-Circuit Impedance (%):</label>
+                <input type="range" id="shortCircuitImpedanceSlider" min="4" max="10" step="0.1" value="6" oninput="syncInputs('shortCircuitImpedance')">
+                <input type="number" id="shortCircuitImpedanceText" min="4" max="10" step="0.1" value="6" oninput="syncInputs('shortCircuitImpedance')">
+                <span class="validation-message" id="shortCircuitImpedanceError"></span>
+            </div>
+            <div class="input-group">
+                <label>Duty Cycle:</label>
+                <select id="dutyCycle" class="broad-select">
+                    <option value="continuous">Continuous</option>
+                    <option value="intermittent">Intermittent</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Overload Capacity (%):</label>
+                <input type="range" id="overloadCapacitySlider" min="100" max="150" step="1" value="120" oninput="syncInputs('overloadCapacity')">
+                <input type="number" id="overloadCapacityText" min="100" max="150" step="1" value="120" oninput="syncInputs('overloadCapacity')">
+                <span class="validation-message" id="overloadCapacityError"></span>
+            </div>
+            <div class="input-group">
+                <label>Insulation Class:</label>
+                <select id="insulationClass" class="broad-select">
+                    <option value="a">Class A (105°C)</option>
+                    <option value="b">Class B (130°C)</option>
+                    <option value="f">Class F (155°C)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Cost of Losses ($/kWh):</label>
+                <input type="range" id="costOfLossesSlider" min="0.05" max="0.5" step="0.01" value="0.1" oninput="syncInputs('costOfLosses')">
+                <input type="number" id="costOfLossesText" min="0.05" max="0.5" step="0.01" value="0.1" oninput="syncInputs('costOfLosses')">
+                <span class="validation-message" id="costOfLossesError"></span>
+            </div>
+            <div class="input-group">
+                <label>Maintenance Interval (Years):</label>
+                <input type="range" id="maintenanceIntervalSlider" min="1" max="10" step="1" value="5" oninput="syncInputs('maintenanceInterval')">
+                <input type="number" id="maintenanceIntervalText" min="1" max="10" step="1" value="5" oninput="syncInputs('maintenanceInterval')">
+                <span class="validation-message" id="maintenanceIntervalError"></span>
             </div>
             <div class="input-group">
                 <label>Live Updates:</label>
                 <input type="checkbox" id="liveUpdateToggle" onchange="toggleLiveUpdates()">
                 <span style="margin-left: 10px;">Enable Live Updates</span>
             </div>
-            <!-- Loss Impact Simulator Toggles -->
-            <div class="input-group">
-                <label>Toggle Losses:</label>
-                <input type="checkbox" id="toggleEddy" checked onchange="calculateLosses(false)"> Eddy Current
-                <input type="checkbox" id="toggleHysteresis" checked onchange="calculateLosses(false)"> Hysteresis
-                <input type="checkbox" id="toggleCopper" checked onchange="calculateLosses(false)"> Copper
-                <input type="checkbox" id="toggleStray" checked onchange="calculateLosses(false)"> Stray
-                <input type="checkbox" id="toggleDielectric" checked onchange="calculateLosses(false)"> Dielectric
-            </div>
             <div class="button-group">
-                <button onclick="calculateWithValidation()">Calculate</button>
-                <button onclick="resetForm()" class="reset-button">Reset</button>
+                <button id="calculateButton" class="calculate-button">Calculate</button>
+                <button id="resetButton" class="reset-button">Reset</button>
+            </div>
+            
+            <!-- Loss Impact Simulator Toggles -->
+            <div class="toggle-section">
+                <h3>Toggle Loss Calculations</h3>
+                <div class="toggle-group">
+                    <label class="toggle-label">
+                        <span>Eddy Losses</span>
+                        <input type="checkbox" id="toggleEddy" checked>
+                        <span class="toggle-switch"></span>
+                    </label>
+                    <label class="toggle-label">
+                        <span>Hysteresis Losses</span>
+                        <input type="checkbox" id="toggleHysteresis" checked>
+                        <span class="toggle-switch"></span>
+                    </label>
+                    <label class="toggle-label">
+                        <span>Copper Losses</span>
+                        <input type="checkbox" id="toggleCopper" checked>
+                        <span class="toggle-switch"></span>
+                    </label>
+                    <label class="toggle-label">
+                        <span>Stray Losses</span>
+                        <input type="checkbox" id="toggleStray" checked>
+                        <span class="toggle-switch"></span>
+                    </label>
+                    <label class="toggle-label">
+                        <span>Dielectric Losses</span>
+                        <input type="checkbox" id="toggleDielectric" checked>
+                        <span class="toggle-switch"></span>
+                    </label>
+                </div>
             </div>
         </div>
 
@@ -180,6 +315,7 @@
             <p>Dielectric Loss: <span id="dielectricLosses">0</span> W</p>
             <p>Total Losses: <span id="totalLosses">0</span> W</p>
             <p>Efficiency: <span id="efficiency">0</span> %</p>
+            <p>Annual Cost of Losses: <span id="annualCost">0</span> $</p>
         </div>
 
         <!-- Visualization Section -->
@@ -190,6 +326,9 @@
             <canvas id="liveLossChart" width="400" height="200"></canvas>
             <canvas id="lossVsTemperatureChart" width="400" height="200"></canvas>
             <canvas id="efficiencyVsLoadChart" width="400" height="200"></canvas>
+            <canvas id="lossVsFrequencyChart" width="400" height="200"></canvas>
+            <canvas id="lossVsCoreThicknessChart" width="400" height="200"></canvas>
+            <canvas id="lossVsPowerFactorChart" width="400" height="200"></canvas>
         </div>
     </div>
     <script src="script.js"></script>
