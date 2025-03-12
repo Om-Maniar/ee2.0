@@ -119,11 +119,13 @@ button:active {
 
 .back-button {
     position: absolute;
-    top: 20px;
+    top: 20px; /* Adjust this value to move it further down if needed */
     left: 20px;
-    padding: 5px 15px;
+    padding: 8px 15px;
     background: linear-gradient(45deg, #ff00ff, #cc00cc);
-    font-size: 0.9em;
+    font-size: 1em;
+    border-radius: 5px;
+    z-index: 10; /* Ensures it appears above other elements */
 }
 
 .reset-button {
